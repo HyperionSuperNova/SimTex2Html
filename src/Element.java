@@ -82,6 +82,20 @@ class Bf extends Element{
     }
 }
 
+abstract class Enumeration extends Element{
+    public abstract String transform();
+}
+
+class ConstructEnumeration extends Enumeration{
+    SuiteItems se;
+    public ConstructEnumeration(SuiteItems se){
+        this.se = se;
+    }
+    public String transform() {
+        return "\n" + "<ol>" + se.transform() + "\n" + "</ol>";
+    }
+}
+
 abstract class SuiteElements extends Corps{
     abstract public String transform();
     abstract public boolean isEmpty();
@@ -115,27 +129,14 @@ class ConstructSuiteElem extends SuiteElements{
 }
 
 
-
-class Enumeration extends Element{
-    SuiteItems se;
-    public Enumeration(SuiteItems se){
-        this.se = se;
-    }
-    public String transform() {
-        return "\n" + "<ol>" + se.transform() + "\n" + "</ol>";
-    }
-}
-
-abstract class SuiteItems extends SuiteElements{
-    abstract public String transform();
-    abstract public boolean isEmpty();
-}
-
-class ConstructSuiteItems extends SuiteItems{
-    SuiteElements se;
+class SuiteItems extends Enumeration{
+    Item se;
     SuiteItems si;
 
-    public ConstructSuiteItems(SuiteElements se1, SuiteItems si1){
+    public SuiteItems(){
+    }
+
+    public SuiteItems(Item se1, SuiteItems si1){
         this.se = se1;
         this.si = si1;
     }
@@ -152,25 +153,16 @@ class ConstructSuiteItems extends SuiteItems{
             return this.si.transform() + this.se.transform();
         }
     }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
 }
 
-class Item extends SuiteElements{
+
+class Item extends SuiteItems{
     private SuiteElements se;
     public Item(SuiteElements se){
         this.se = se;
     }
     public String transform(){
         return "<li>" + se.transform() + "</li>";
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 }
 

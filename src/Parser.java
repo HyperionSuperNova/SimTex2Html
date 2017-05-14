@@ -112,12 +112,12 @@ class Parser{
     public SuiteItems suiteItem() throws Exception{
         if(reader.check(Sym.ITEM)) {
             reader.eat(Sym.ITEM);
-            return new ConstructSuiteItems(new Item((SuiteElements) suitelem()), (SuiteItems) suiteItem());
+            return new SuiteItems(new Item(suitelem()), suiteItem());
         } else return null;
     }
 
     public Enumeration enumerate() throws Exception{
         reader.eat(Sym.BEGINENUM);
-        return new Enumeration(this.suiteItem());
+        return new ConstructEnumeration(this.suiteItem());
     }
 }
