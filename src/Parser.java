@@ -41,56 +41,44 @@ class Parser{
 
     public Corps document() throws Exception {
         reader.eat(Sym.BEGINDOC);
-        Corps corps = new ConstructCorps(suitelem());
+        Corps corps = new ConstructCorps((SuiteElements)suitelem());
         reader.eat(Sym.ENDDOC);
         reader.eat(Sym.EOF);
         return corps;
     }
 
     public SuiteElements suitelem() throws Exception{
-        if(reader.check(Sym.ENDDOC)){
-            return null;
+        if(reader.check(Sym.MOT)) {
+            reader.eat(Sym.MOT);
+            return new ConstructSuiteElem(new Mot(reader.getValue()),suitelem());
+        }else if(reader.check(Sym.LINEBREAK)){
+            Element l = linebreak();
+            //if(this.reader.check(Sym.ENDENUM)) endEnumerate();
+            //else if (this.reader.check(Sym.ITEM)) return suiteItem();
+            return new ConstructSuiteElem(l,suitelem());
+        }else if(reader.check(Sym.BEGINENUM)){
+            return new ConstructSuiteElem(enumerate(),suitelem());
+        }else if(reader.check(Sym.BFBEG)){
+            memory = Sym.BFBEG;
+            return new ConstructSuiteElem(bfbeg(),suitelem());
+        }else if(reader.check(Sym.AD)){
+            reader.eat(Sym.AD);
         }
-        return new ConstructSuiteElem(elem(),suitelem());
-
-        /*if(reader.check(Sym.ITEM)) {
-            return new ConstructSuiteItems(null, (SuiteItems)suiteItem());
-        }else{
-            return null;
-        }*/
+        return null;
     }
 
     public Element elem() throws Exception{
-        if(reader.check(Sym.MOT)){
-            return mot();
-        }else if(reader.check(Sym.LINEBREAK)){
-            return linebreak();
-        }else if(reader.check(Sym.BFBEG)){
-            memory = Sym.BFBEG;
-            return bfbeg();
-        }else if(reader.check(Sym.ITBEG)) {
+        /*else if(reader.check(Sym.ITBEG)) {
             memory = Sym.ITBEG;
             return itbeg();
         }else if(reader.check(Sym.AD)) {
             reader.eat(Sym.AD);
-            if(memory == Sym.ITBEG) {
-                return new It(null);
-            }else{
-                return new Bf(null);
-            }
-        }else if(reader.check(Sym.BEGINENUM)) {
-            return enumerate();
-        }else if(reader.check(Sym.ITEM)) {
-            return suiteItem();
-        }else if(reader.check(Sym.ENDENUM)){
-            return endEnumerate();
-        }else throw new Exception("YOU BROKE MY GAME");
-    }
-
-    public Element mot() throws Exception{
-        String s = reader.getValue();
-        reader.eat(Sym.MOT);
-        return new Mot(s);
+            if(memory == Sym.ITBEG) return new It(null);
+            else return new Bf(null);
+        }else{
+            return null;
+        }*/
+        return null;
     }
 
     public Element linebreak() throws Exception{
@@ -115,21 +103,27 @@ class Parser{
     }
 
     public SuiteItems suiteItem() throws Exception{
-        if(reader.check(Sym.ITEM)) {
+        SuiteItems b = null;
+        if(this.reader.check(Sym.ITEM)) {
             reader.eat(Sym.ITEM);
-            return new SuiteItems(new Item(suitelem()), suiteItem());
-        }else{
-            throw new Exception("yolo");
+            b = new SuiteItems(new Item(suitelem()), suiteItem());
         }
+        return b;
     }
 
     public Enumeration enumerate() throws Exception {
         reader.eat(Sym.BEGINENUM);
-        return new ConstructEnumeration(this.suiteItem());
+        Enumeration enu = null;
+        if (reader.check(Sym.ITEM)) {
+            enu = new ConstructEnumeration(this.suiteItem());
+        }else{
+            enu = new ConstructEnumeration(null);
+        }
+        endEnumerate();
+        return enu;
     }
 
-    public Enumeration endEnumerate() throws Exception{
-        reader.eat(Sym.ENDENUM);
-        return null;
+    public void endEnumerate() throws Exception{
+        if(this.reader.check(Sym.ENDENUM)) reader.eat(Sym.ENDENUM);
     }
 }

@@ -15,7 +15,6 @@ class Main {
         Parser parser = new Parser(look);
         try {
             Corps corps = parser.document();
-            System.out.println(corps.toString());
             System.out.println(corps.transform());
 
             File f = new File("./projet.html");

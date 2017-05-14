@@ -32,6 +32,9 @@ class ConstructCorps extends Corps{
     }
     @Override
     public String transform() {
+        if(se == null){
+            return "<!DOCTYPE html>\n<html>\n<body>\n" + "\n</body>\n</html>";
+        }
         return "<!DOCTYPE html>\n<html>\n<body>\n" + se.transform() + "\n</body>\n</html>";
     }
 }
@@ -100,7 +103,11 @@ class ConstructEnumeration extends Enumeration{
         this.se = se;
     }
     public String transform() {
-        return "\n" + "<ol>" + se.transform() + "\n" + "</ol>";
+        if(this.se == null){
+            return "<ol>" + "</ol>";
+        } else{
+            return "\n" + "<ol>" + se.transform() + "</ol> \n";
+        }
     }
 }
 
@@ -171,9 +178,9 @@ class Item extends SuiteItems{
     }
     public String transform(){
         if(this.se == null){
-            return "\n";
+            return "";
         }else {
-            return "<li>" + se.transform() + "</li>";
+            return "\n <li>" + se.transform() + "</li> \n";
         }
     }
 }
