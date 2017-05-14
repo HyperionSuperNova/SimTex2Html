@@ -15,7 +15,7 @@ class Parser{
     VAL_COL           ->     \constante_couleur | ID
 */
     protected LookAhead1 reader;
-
+    public static Sym memory = null;
     public Parser(LookAhead1 r) {
         reader=r;
     }
@@ -66,19 +66,22 @@ class Parser{
         }else if(reader.check(Sym.LINEBREAK)){
             return linebreak();
         }else if(reader.check(Sym.BFBEG)){
+            memory = Sym.BFBEG;
             return bfbeg();
         }else if(reader.check(Sym.ITBEG)) {
+            memory = Sym.ITBEG;
             return itbeg();
         }else if(reader.check(Sym.AD)) {
             reader.eat(Sym.AD);
-            return null;
+            if(memory == Sym.ITBEG) {
+                return new It(null);
+            }else{
+                return new Bf(null);
+            }
         }else if(reader.check(Sym.BEGINENUM)) {
             return enumerate();
-        }else if(reader.check(Sym.ENDENUM)) {
-            reader.eat(Sym.ENDENUM);
-            return null;
         }else{
-            return null;
+            throw new Exception("YOU BROKE MY PROGRAM !");
         }
     }
 
@@ -113,11 +116,15 @@ class Parser{
         if(reader.check(Sym.ITEM)) {
             reader.eat(Sym.ITEM);
             return new SuiteItems(new Item(suitelem()), suiteItem());
-        } else return null;
+        }else{
+            throw new Exception("yolo");
+        }
     }
 
     public Enumeration enumerate() throws Exception{
         reader.eat(Sym.BEGINENUM);
-        return new ConstructEnumeration(this.suiteItem());
+        Enumeration b = new ConstructEnumeration(this.suiteItem());
+        reader.eat(Sym.ENDENUM);
+        return b;
     }
 }

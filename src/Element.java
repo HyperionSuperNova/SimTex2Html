@@ -67,7 +67,11 @@ class It extends Element{
         this.s = s;
     }
     public String transform() {
-        return "<i>" + s.transform() + "</i>";
+        if(this.s == null){
+            return "</i>";
+        }else {
+            return "<i>" + s.transform();
+        }
     }
 }
 
@@ -78,7 +82,11 @@ class Bf extends Element{
     }
     @Override
     public String transform() {
-        return "<b>" + s.transform() + "</b>";
+        if(this.s == null) {
+            return "<\b>";
+        }else{
+            return "<b>" + s.transform();
+        }
     }
 }
 
@@ -162,7 +170,11 @@ class Item extends SuiteItems{
         this.se = se;
     }
     public String transform(){
-        return "<li>" + se.transform() + "</li>";
+        if(this.se == null){
+            return "\n";
+        }else {
+            return "<li>" + se.transform() + "</li>";
+        }
     }
 }
 
