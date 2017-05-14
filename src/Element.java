@@ -116,18 +116,13 @@ class ConstructSuiteElem extends SuiteElements{
 
 
 
-class Enumeration extends SuiteElements{
+class Enumeration extends Element{
     SuiteItems se;
     public Enumeration(SuiteItems se){
         this.se = se;
     }
     public String transform() {
         return "\n" + "<ol>" + se.transform() + "\n" + "</ol>";
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 }
 
@@ -170,7 +165,7 @@ class Item extends SuiteElements{
         this.se = se;
     }
     public String transform(){
-        return "\n" + "<li>" + se.transform() + "</li>" + "\n";
+        return "<li>" + se.transform() + "</li>";
     }
 
     @Override

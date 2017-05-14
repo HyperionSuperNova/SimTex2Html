@@ -41,13 +41,26 @@ class Parser{
 
     public Corps document() throws Exception {
         reader.eat(Sym.BEGINDOC);
-        Corps corps = new ConstructCorps((SuiteElements)suitelem());
+        Corps corps = new ConstructCorps(suitelem());
         reader.eat(Sym.ENDDOC);
         reader.eat(Sym.EOF);
         return corps;
     }
 
-    public Corps suitelem() throws Exception{
+    public SuiteElements suitelem() throws Exception{
+        if(reader.check(Sym.ENDDOC)){
+            return null;
+        }
+        return new ConstructSuiteElem(elem(),suitelem());
+
+        /*if(reader.check(Sym.ITEM)) {
+            return new ConstructSuiteItems(null, (SuiteItems)suiteItem());
+        }else{
+            return null;
+        }*/
+    }
+
+    public Element elem() throws Exception{
         if(reader.check(Sym.MOT)){
             return mot();
         }else if(reader.check(Sym.LINEBREAK)){
@@ -56,54 +69,55 @@ class Parser{
             return bfbeg();
         }else if(reader.check(Sym.ITBEG)) {
             return itbeg();
+        }else if(reader.check(Sym.AD)) {
+            reader.eat(Sym.AD);
+            return null;
         }else if(reader.check(Sym.BEGINENUM)) {
-            reader.eat(Sym.BEGINENUM);
-            return new Enumeration((SuiteItems)this.suiteItem());
+            return enumerate();
         }else if(reader.check(Sym.ENDENUM)) {
             reader.eat(Sym.ENDENUM);
-            return new ConstructSuiteElem(null, suitelem());
-        }else if(reader.check(Sym.ITEM)) {
-            return new ConstructSuiteItems(null, (SuiteItems)suiteItem());
+            return null;
         }else{
             return null;
         }
     }
 
-    public Corps mot() throws Exception{
+    public Element mot() throws Exception{
         String s = reader.getValue();
         reader.eat(Sym.MOT);
-        return new ConstructSuiteElem(new Mot(s), (SuiteElements)suitelem());
+        return new Mot(s);
     }
 
-    public Corps linebreak() throws Exception{
+    public Element linebreak() throws Exception{
         reader.eat(Sym.LINEBREAK);
-        return new ConstructSuiteElem(new Linebreak("\n"), (SuiteElements)suitelem());
+        return new Linebreak("\n");
     }
 
-    public Corps bfbeg() throws Exception{
+    public Element bfbeg() throws Exception{
         reader.eat(Sym.BFBEG);
         if(reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
-            Corps c = new ConstructSuiteElem(new Bf((SuiteElements)suitelem()), (SuiteElements) suitelem());
-            reader.eat(Sym.AD);
-            return c;
+            return new Bf(suitelem());
         }else throw new Exception("AG of Bf cannot be reduce");
     }
 
-    public Corps itbeg() throws Exception {
+    public Element itbeg() throws Exception {
         reader.eat(Sym.ITBEG);
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
-            Corps c = new ConstructSuiteElem(new It((SuiteElements) suitelem()), suitelem());
-            reader.eat(Sym.AD);
-            return c;
+            return new It(suitelem());
         } else throw new Exception("AG of It cannot be reduce");
     }
 
-    public Corps suiteItem() throws Exception{
+    public SuiteItems suiteItem() throws Exception{
         if(reader.check(Sym.ITEM)) {
             reader.eat(Sym.ITEM);
             return new ConstructSuiteItems(new Item((SuiteElements) suitelem()), (SuiteItems) suiteItem());
-        } else return suitelem();
+        } else return null;
+    }
+
+    public Enumeration enumerate() throws Exception{
+        reader.eat(Sym.BEGINENUM);
+        return new Enumeration(this.suiteItem());
     }
 }
