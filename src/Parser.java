@@ -49,8 +49,10 @@ class Parser{
 
     public SuiteElements suitelem() throws Exception{
         if(reader.check(Sym.MOT)) {
+            String s = reader.getValue();
             reader.eat(Sym.MOT);
-            return new ConstructSuiteElem(new Mot(reader.getValue()),suitelem());
+            Element a = new Mot(s);
+            return new ConstructSuiteElem(a,suitelem());
         }else if(reader.check(Sym.LINEBREAK)){
             Element l = linebreak();
             //if(this.reader.check(Sym.ENDENUM)) endEnumerate();
@@ -61,8 +63,6 @@ class Parser{
         }else if(reader.check(Sym.BFBEG)){
             memory = Sym.BFBEG;
             return new ConstructSuiteElem(bfbeg(),suitelem());
-        }else if(reader.check(Sym.AD)){
-            reader.eat(Sym.AD);
         }
         return null;
     }
