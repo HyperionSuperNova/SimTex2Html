@@ -61,7 +61,7 @@ class Linebreak extends Element{
     }
 
     @Override
-    public String transform() { return "\n" + "<br>" + "\n"; }
+    public String transform() { return " <br>"; }
 }
 
 class It extends Element{
@@ -73,7 +73,7 @@ class It extends Element{
         if(this.s == null){
             return "</i>";
         }else {
-            return "<i>" + s.transform();
+            return "<i>" + s.transform() + "</i>";
         }
     }
 }
@@ -86,9 +86,9 @@ class Bf extends Element{
     @Override
     public String transform() {
         if(this.s == null) {
-            return "<\b>";
+            return "</b>";
         }else{
-            return "<b>" + s.transform();
+            return "\n" + "<b>" + s.transform() + "</b>";
         }
     }
 }
@@ -104,9 +104,9 @@ class ConstructEnumeration extends Enumeration{
     }
     public String transform() {
         if(this.se == null){
-            return "<ol>" + "</ol>";
+            return "\n" + "<ol>" + "</ol>";
         } else{
-            return "\n" + "<ol>" + se.transform() + "</ol> \n";
+            return "\n" + "<ol>" + se.transform() + "</ol>";
         }
     }
 }
@@ -165,7 +165,7 @@ class SuiteItems extends Enumeration{
         }else if(this.si == null && this.se != null){
             return "" + se.transform();
         }else {
-            return this.si.transform() + this.se.transform();
+            return this.se.transform() + this.si.transform();
         }
     }
 }
@@ -180,7 +180,7 @@ class Item extends SuiteItems{
         if(this.se == null){
             return "";
         }else {
-            return "\n <li>" + se.transform() + "</li> \n";
+            return "\n <li>" + se.transform() + "</li>";
         }
     }
 }
