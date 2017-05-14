@@ -80,9 +80,11 @@ class Parser{
             }
         }else if(reader.check(Sym.BEGINENUM)) {
             return enumerate();
-        }else{
-            throw new Exception("YOU BROKE MY PROGRAM !");
-        }
+        }else if(reader.check(Sym.ITEM)) {
+            return suiteItem();
+        }else if(reader.check(Sym.ENDENUM)){
+            return endEnumerate();
+        }else throw new Exception("YOU BROKE MY GAME");
     }
 
     public Element mot() throws Exception{
@@ -121,10 +123,13 @@ class Parser{
         }
     }
 
-    public Enumeration enumerate() throws Exception{
+    public Enumeration enumerate() throws Exception {
         reader.eat(Sym.BEGINENUM);
-        Enumeration b = new ConstructEnumeration(this.suiteItem());
+        return new ConstructEnumeration(this.suiteItem());
+    }
+
+    public Enumeration endEnumerate() throws Exception{
         reader.eat(Sym.ENDENUM);
-        return b;
+        return null;
     }
 }
