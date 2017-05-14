@@ -56,9 +56,6 @@ class Parser{
             return bfbeg();
         }else if(reader.check(Sym.ITBEG)) {
             return itbeg();
-        }else if(reader.check(Sym.AD)) {
-            reader.eat(Sym.AD);
-            return (SuiteElements) suitelem();
         }else if(reader.check(Sym.BEGINENUM)) {
             reader.eat(Sym.BEGINENUM);
             return new Enumeration((SuiteItems)this.suiteItem());
@@ -87,7 +84,9 @@ class Parser{
         reader.eat(Sym.BFBEG);
         if(reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
-            return new ConstructSuiteElem(new Bf((SuiteElements)suitelem()), (SuiteElements) suitelem());
+            Corps c = new ConstructSuiteElem(new Bf((SuiteElements)suitelem()), (SuiteElements) suitelem());
+            reader.eat(Sym.AD);
+            return c;
         }else throw new Exception("AG of Bf cannot be reduce");
     }
 
@@ -95,7 +94,9 @@ class Parser{
         reader.eat(Sym.ITBEG);
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
-            return new ConstructSuiteElem(new It((SuiteElements) suitelem()), suitelem());
+            Corps c = new ConstructSuiteElem(new It((SuiteElements) suitelem()), suitelem());
+            reader.eat(Sym.AD);
+            return c;
         } else throw new Exception("AG of It cannot be reduce");
     }
 
