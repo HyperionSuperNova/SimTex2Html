@@ -69,7 +69,7 @@ class ValCol extends Declarations{
         this.valeur = valeur;
     }
     @Override
-    public String transform() { return this.valeur; }
+    public String transform() { return "\n<body text= " + this.valeur; }
 }
 
 class ConstructCol extends Element{
@@ -97,7 +97,7 @@ class ConstructCorps extends Corps{
         if(se == null){
             return "";
         }
-        return "<body>\n" + se.transform() + "\n</body>";
+        return "\n<body>\n" + se.transform() + "\n</body>";
     }
 }
 
