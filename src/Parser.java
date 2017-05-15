@@ -70,31 +70,6 @@ class Parser{
         return null;
     }
 
-    /*public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
-        String id = "";
-        String valeur = "";
-        if(reader.check(Sym.SETCOL)) reader.eat(Sym.SETCOL);
-        if (reader.check(Sym.AG)) {
-            reader.eat(Sym.AG);
-            if (reader.check(Sym.MOT)) {
-                id = reader.getValue();
-                reader.eat(Sym.MOT);
-            }
-            reader.eat(Sym.AD);
-            if (reader.check(Sym.AG)) {
-                reader.eat(Sym.AG);
-                if (reader.check(Sym.MOT)) {
-                    valeur = reader.getValue();
-                    reader.eat(Sym.MOT);
-                }
-                reader.eat(Sym.AD);
-                return new ConstructDeclarations(setCol(), new ValCol(id,valeur));
-            }
-        }
-        return null;
-    }*/
-
-
     public Corps document() throws Exception {
         reader.eat(Sym.BEGINDOC);
         Corps corps = new ConstructCorps(suiteelem());
