@@ -6,6 +6,14 @@ abstract class Declarations {
     abstract public String transform();
 }
 
+abstract class Document{
+    abstract public String transform();
+}
+
+class ConstructDocument{
+    
+}
+
 class ConstructDeclarations extends Declarations{
     ValCol vc;
     Declarations d;
