@@ -1,8 +1,10 @@
-abstract class Corps {
+import com.sun.javafx.css.Declaration;
+
+abstract class Corps extends Document{
     abstract public String transform();
 }
 
-abstract class Declarations {
+abstract class Declarations extends Document{
     abstract public String transform();
 }
 
@@ -10,8 +12,27 @@ abstract class Document{
     abstract public String transform();
 }
 
-class ConstructDocument{
-    
+class ConstructDocument extends Document{
+    Declarations d;
+    Corps c;
+    public ConstructDocument(Declarations d, Corps c) {
+        this.d = d;
+        this.c = c;
+    }
+
+    @Override
+    public String transform() {
+        if(d == null && c != null){
+            return "<!DOCTYPE html>\n<html>" + c.transform() +"\n</html>";
+        }else if(d!= null && c==null){
+            return "<!DOCTYPE html>\n<html>" +d.transform()+ "\n</html>";
+        }else if(c != null && d !=null) {
+            return "<!DOCTYPE html>\n<html>\n<head>" + d.transform()+ "\n</head>"+ c.transform() + "\n</html>";
+
+        }else{
+            return "<!DOCTYPE html>\n<html> \n</html>";
+        }
+    }
 }
 
 class ConstructDeclarations extends Declarations{
@@ -22,7 +43,22 @@ class ConstructDeclarations extends Declarations{
         this.vc = vc;
     }
     @Override
-    public String transform() { return "<font color = #" + vc.transform() + " >"+ "</font>"; }
+    public String transform() { return vc.transform() + ">"; }
+}
+
+class Cons_Col extends Declarations{
+    private String id;
+    private String valeur;
+
+    public Cons_Col(String valeur, Declaration se){
+        this.valeur = valeur;
+        this.id = id;
+    }
+
+    @Override
+    public String transform() {
+        return "\n<body text=" + this.valeur + ">";
+    }
 }
 
 class ValCol extends Declarations{
@@ -59,9 +95,9 @@ class ConstructCorps extends Corps{
     @Override
     public String transform() {
         if(se == null){
-            return "<!DOCTYPE html>\n<html>\n<body>\n" + "\n</body>\n</html>";
+            return "";
         }
-        return "<!DOCTYPE html>\n<html>\n<body>\n" + se.transform() + "\n</body>\n</html>";
+        return "<body>\n" + se.transform() + "\n</body>";
     }
 }
 

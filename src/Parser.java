@@ -23,6 +23,10 @@ class Parser{
         reader=r;
     }
 
+    public Document docu() throws Exception{
+        return new ConstructDocument(debDeclaration(),document());
+    }
+
     public Declarations debDeclaration() throws Exception {
         return setCol();
     }
