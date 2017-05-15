@@ -26,16 +26,10 @@ class ConstructDocument extends Document{
 
     @Override
     public String transform() {
-        if(d == null && c != null){
-            return "<!DOCTYPE html>\n<html>" + c.transform() +"\n</html>";
-        }else if(d!= null && c==null){
-            return "<!DOCTYPE html>\n<html>" +d.transform()+ "\n</html>";
-        }else if(c != null && d !=null) {
-            return "<!DOCTYPE html>\n<html>\n<head>" + d.transform()+ "\n</head>"+ c.transform() + "\n</html>";
-
-        }else{
-            return "<!DOCTYPE html>\n<html> \n</html>";
-        }
+        if(d == null && c != null) return "<!DOCTYPE html>\n<html>" + c.transform() +"\n</html>";
+        else if(d!= null && c==null) return "<!DOCTYPE html>\n<html>" +d.transform()+ "\n</html>";
+        else if(c != null && d !=null) return "<!DOCTYPE html>\n<html>\n<head>" + d.transform()+ "\n</head>"+ c.transform() + "\n</html>";
+        else return "<!DOCTYPE html>\n<html> \n</html>";
     }
 }
 
@@ -48,13 +42,9 @@ class ConstructDeclarations extends Declarations{
     }
     @Override
     public String transform() {
-        if(this.cv == null && this.d == null) {
-            return "";
-        }else if(this.d == null && this.cv != null){
-            return cv.transform();
-        }else if(this.d != null && this.cv == null){
-            return this.d.transform();
-        }
+        if(this.cv == null && this.d == null) return "";
+        else if(this.d == null && this.cv != null) return cv.transform();
+        else if(this.d != null && this.cv == null) return this.d.transform();
         return cv.transform() + this.d.transform(); }
 }
 
@@ -107,9 +97,7 @@ class ConstructCorps extends Corps{
     }
     @Override
     public String transform() {
-        if(se == null){
-            return "";
-        }
+        if(se == null)  return "";
         return "\n<body>\n" + se.transform() + "\n</body>";
     }
 }
@@ -145,11 +133,8 @@ class It extends Element{
         this.s = s;
     }
     public String transform() {
-        if(this.s == null){
-            return "</i>";
-        }else {
-            return "<i>" + s.transform() + "</i>";
-        }
+        if(this.s == null) return "</i>";
+        else return "<i>" + s.transform() + "</i>";
     }
 }
 
@@ -175,11 +160,8 @@ class Bf extends Element{
     }
     @Override
     public String transform() {
-        if(this.s == null) {
-            return "</b>";
-        }else{
-            return "<b>" + s.transform() + "</b>";
-        }
+        if(this.s == null) return "</b>";
+        else return "<b>" + s.transform() + "</b>";
     }
 }
 
@@ -193,11 +175,8 @@ class ConstructEnumeration extends Enumeration{
         this.se = se;
     }
     public String transform() {
-        if(this.se == null){
-            return "\n" + "<ol>" + "</ol>";
-        } else{
-            return "\n" + "<ol>" + se.transform() + "</ol>";
-        }
+        if(this.se == null) return "\n" + "<ol>" + "</ol>";
+        else return "\n" + "<ol>" + se.transform() + "</ol>";
     }
 }
 
@@ -216,15 +195,10 @@ class ConstructSuiteElem extends SuiteElements{
     }
     @Override
     public String transform() {
-        if(this.e == null && this.se == null){
-            return "";
-        }else if(this.se == null && this.e != null){
-            return e.transform() + "";
-        }else if(this.e == null && this.se != null){
-            return "" + se.transform();
-        }else {
-            return this.e.transform() + this.se.transform();
-        }
+        if(this.e == null && this.se == null) return "";
+        else if(this.se == null && this.e != null) return e.transform() + "";
+        else if(this.e == null && this.se != null) return "" + se.transform();
+        else return this.e.transform() + this.se.transform();
     }
 
     @Override
@@ -248,15 +222,10 @@ class SuiteItems extends Enumeration{
 
     @Override
     public String transform() {
-        if(this.si == null && this.se == null){
-            return "";
-        }else if(this.se == null && this.si != null){
-            return si.transform() + "";
-        }else if(this.si == null && this.se != null){
-            return "" + se.transform();
-        }else {
-            return this.se.transform() + this.si.transform();
-        }
+        if(this.si == null && this.se == null) return "";
+        else if(this.se == null && this.si != null) return si.transform() + "";
+        else if(this.si == null && this.se != null) return "" + se.transform();
+        else return this.se.transform() + this.si.transform();
     }
 }
 
@@ -267,14 +236,8 @@ class Item extends SuiteItems{
         this.se = se;
     }
     public String transform(){
-        if(this.se == null){
-            return "";
-        }else {
-            return "\n <li>" + se.transform() + "</li>";
-        }
+        if(this.se == null) return "";
+        else return "\n <li>" + se.transform() + "</li>";
     }
 }
-
-
-/*Suivre la grammaire pour construire l'arbre de syntaxe abstraite*/
 
