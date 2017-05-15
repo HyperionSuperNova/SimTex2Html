@@ -59,3 +59,11 @@ class ValColToken extends Token{
 
     public String getValue(){ return couleur; }
 }
+
+class ABBMOTTOKEN extends Token{
+    private String value;
+    public ABBMOTTOKEN(Sym s, String value){
+        super(s);
+        this.value = value;
+    }
+}

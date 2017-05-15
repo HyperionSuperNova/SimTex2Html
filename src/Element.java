@@ -1,5 +1,8 @@
 import com.sun.javafx.css.Declaration;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 abstract class Corps extends Document{
     abstract public String transform();
 }
@@ -11,6 +14,7 @@ abstract class Declarations extends Document{
 abstract class Document{
     abstract public String transform();
 }
+
 
 class ConstructDocument extends Document{
     Declarations d;
@@ -36,28 +40,37 @@ class ConstructDocument extends Document{
 }
 
 class ConstructDeclarations extends Declarations{
-    ValCol vc;
+    Cons_Col cv;
     Declarations d;
-    public ConstructDeclarations (Declarations d,ValCol vc){
+    public ConstructDeclarations (Cons_Col cv, Declarations d){
         this.d =d;
-        this.vc = vc;
+        this.cv = cv;
     }
     @Override
-    public String transform() { return vc.transform() + ">"; }
+    public String transform() {
+        if(this.cv == null && this.d == null) {
+            return "";
+        }else if(this.d == null && this.cv != null){
+            return cv.transform();
+        }else if(this.d != null && this.cv == null){
+            return this.d.transform();
+        }
+        return cv.transform() + this.d.transform(); }
 }
 
 class Cons_Col extends Declarations{
     private String id;
     private String valeur;
 
-    public Cons_Col(String valeur, Declaration se){
+    public Cons_Col(String id, String valeur){
         this.valeur = valeur;
         this.id = id;
     }
 
     @Override
     public String transform() {
-        return "\n<body text=" + this.valeur + ">";
+        Parser.color.put(this.id,this.valeur);
+        return "";
     }
 }
 
@@ -69,7 +82,7 @@ class ValCol extends Declarations{
         this.valeur = valeur;
     }
     @Override
-    public String transform() { return "\n<body text= " + this.valeur; }
+    public String transform() { return "\n<abbr title="+ this.id +">" + this.valeur+ "</abbr>"; }
 }
 
 class ConstructCol extends Element{
@@ -137,6 +150,21 @@ class It extends Element{
         }else {
             return "<i>" + s.transform() + "</i>";
         }
+    }
+}
+
+class Abb extends Element{
+    private String ab;
+    private String valeur;
+
+    public Abb(String ab, String valeur){
+        this.valeur = valeur;
+        this.ab = ab;
+    }
+
+    @Override
+    public String transform() {
+        return "\n<abbr title=" + valeur.substring(1) + ">" + ab.substring(1) + "</abbr>\n";
     }
 }
 

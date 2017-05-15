@@ -31,5 +31,7 @@ valcol = [A-Z0-9][A-Z0-9][A-Z0-9][A-Z0-9][A-Z0-9][A-Z0-9]
 "\\set"               {return new Token(Sym.SETCOL);}
 {valcol}              {return new ValColToken(Sym.VALCOL, yytext());}
 "\\couleur"           {return new Token(Sym.COULEUR);}
+"\\abb"               {return new Token(Sym.ABB);}
+"\\"{mot}             {return new MotToken(Sym.MOT,yytext());}
 {blanc}               {}
 <<EOF>>		          {return new Token(Sym.EOF);}
