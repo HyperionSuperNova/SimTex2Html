@@ -7,23 +7,41 @@ abstract class Declarations {
 }
 
 class ConstructDeclarations extends Declarations{
-    ValeurCouleur vc;
-    String texte;
-    public ConstructDeclarations (String texte, ValeurCouleur vc){
-        this.texte = texte;
+    ValCol vc;
+    Declarations d;
+    public ConstructDeclarations (Declarations d,ValCol vc){
+        this.d =d;
         this.vc = vc;
     }
     @Override
-    public String transform() { return "<font color=" + vc.transform() + ">" + texte + "</font>"; }
+    public String transform() { return "<font color = #" + vc.transform() + " >"+ "</font>"; }
 }
 
-class ValeurCouleur extends Declarations{
-    private String value;
-    public ValeurCouleur (String value){ this.value = value; }
+class ValCol extends Declarations{
+    private String id;
+    private String valeur;
+    public ValCol (String id, String valeur){
+        this.id = id;
+        this.valeur = valeur;
+    }
     @Override
-    public String transform() { return this.value; }
+    public String transform() { return this.valeur; }
 }
 
+class ConstructCol extends Element{
+    private String valeur;
+    SuiteElements se;
+
+    public ConstructCol(String valeur, SuiteElements se){
+        this.valeur = valeur;
+        this.se = se;
+    }
+
+    @Override
+    public String transform() {
+        return "<font color = #" + valeur + " > " +se.transform() + " </font>";
+    }
+}
 
 class ConstructCorps extends Corps{
     SuiteElements se;
@@ -88,7 +106,7 @@ class Bf extends Element{
         if(this.s == null) {
             return "</b>";
         }else{
-            return "\n" + "<b>" + s.transform() + "</b>";
+            return "<b>" + s.transform() + "</b>";
         }
     }
 }

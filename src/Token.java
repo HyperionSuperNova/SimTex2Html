@@ -50,9 +50,9 @@ class LineBreakToken extends Token{
     }
 }
 
-class SetCouleurToken extends Token{
+class ValColToken extends Token{
     private String couleur;
-    public SetCouleurToken(Sym s, String couleur) {
+    public ValColToken(Sym s, String couleur) {
         super(s);
         this.couleur = couleur;
     }

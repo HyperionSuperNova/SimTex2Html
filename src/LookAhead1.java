@@ -22,7 +22,6 @@ public class LookAhead1 {
         }
         System.out.println(current.symbol()); //for debug only!
         current=lexer.yylex();
-        System.out.println("try" + current.symbol());
 
     }
 

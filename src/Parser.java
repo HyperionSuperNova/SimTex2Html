@@ -2,10 +2,11 @@ import java.io.*;
 
 class Parser{
     /*
+
     Grammaire:
 
     DOCUMENTS         ->     DECLARATIONS CORPS
-    DECLARATIONS      ->     \set{ID} {VALEUR} DECLARATIONS | e
+    DECLARATIONS      ->     \set{ID} {VAL_COL} DECLARATIONS | e
     CORPS             ->     \begindoc SUITE_ELEMENTS \enddoc
     SUITE_ELEMENTS    ->     ELEMENTS SUITE_ELEMENTS | e
     ELEMENT           ->     MOT | LINEBREAK | \bf{SUITE_ELEMENTS} | \it{SUITE_ELEMENTS} | ENUMERATION | \couleur{VAL_COL}{SUITE_ELEMENTS}
@@ -13,31 +14,43 @@ class Parser{
     SUITE_ITEMS       ->     ITEM SUITE_ITEMS | e
     ITEM              ->     \item SUITE-ELEMENTS
     VAL_COL           ->     \constante_couleur | ID
-*/
+
+    */
+
     protected LookAhead1 reader;
     public static Sym memory = null;
     public Parser(LookAhead1 r) {
         reader=r;
     }
 
-    /*
     public Declarations debDeclaration() throws Exception {
-        reader.eat(Sym.BEGINCOUL);
-        return declarations();
+        return setCol();
     }
 
-    public Declarations declarations() throws Exception {
-        ValeurCouleur vc = null;
+    public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
+        String id = "";
+        String valeur = "";
+        if(reader.check(Sym.SETCOL)) reader.eat(Sym.SETCOL);
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
-            vc = new ValeurCouleur(reader.getString());
-            return vc;
-        } else if (reader.check(Sym.AD)) {
+            if (reader.check(Sym.MOT)) {
+                id = reader.getValue();
+                reader.eat(Sym.MOT);
+            }
             reader.eat(Sym.AD);
-            return new ConstructDeclarations(reader.getString(),vc);
-        }else throw new Exception("don't know what to do for now");
+            if (reader.check(Sym.AG)) {
+                reader.eat(Sym.AG);
+                if (reader.check(Sym.MOT)) {
+                    valeur = reader.getValue();
+                    reader.eat(Sym.MOT);
+                }
+                reader.eat(Sym.AD);
+                return new ConstructDeclarations(setCol(), new ValCol(id,valeur));
+            }
+        }
+        return null;
     }
-    */
+
 
     public Corps document() throws Exception {
         reader.eat(Sym.BEGINDOC);
@@ -55,8 +68,6 @@ class Parser{
         }else if(reader.check(Sym.LINEBREAK)){
             reader.eat(Sym.LINEBREAK);
             Linebreak l = new Linebreak("\n");
-            //if(this.reader.check(Sym.ENDENUM)) endEnumerate();
-            //else if (this.reader.check(Sym.ITEM)) return suiteItem();
             return new ConstructSuiteElem(l,suiteelem());
         }else if(reader.check(Sym.BFBEG)){
             memory = Sym.BFBEG;
@@ -68,31 +79,24 @@ class Parser{
         }else if(reader.check(Sym.BEGINENUM)){
             reader.eat(Sym.BEGINENUM);
             return new ConstructSuiteElem(enumerate(),suiteelem());
+        }else if(reader.check(Sym.COULEUR)){
+            return new ConstructSuiteElem(couleur(), suiteelem());
         }
         return null;
     }
 
-    /*public SuiteElements suitelem() throws Exception{
-        else if(reader.check(Sym.BFBEG)){
-            return new ConstructSuiteElem(bfbeg(),suitelem());
-        }else if (reader.check(Sym.ITBEG)){
-            return new ConstructSuiteElem(itbeg(),suiteelem());
+    public Element couleur() throws Exception {
+        String valeur ="";
+        reader.eat(Sym.COULEUR);
+        reader.eat(Sym.AG);
+        if(reader.check(Sym.MOT)){
+            valeur = reader.getValue();
+            reader.eat(Sym.MOT);
         }
-        return null;
-    }*/
-
-    public Element elem() throws Exception{
-        /*else if(reader.check(Sym.ITBEG)) {
-            memory = Sym.ITBEG;
-            return itbeg();
-        }else if(reader.check(Sym.AD)) {
-            reader.eat(Sym.AD);
-            if(memory == Sym.ITBEG) return new It(null);
-            else return new Bf(null);
-        }else{
-            return null;
-        }*/
-        return null;
+        reader.eat(Sym.AD);
+        reader.eat(Sym.AG);
+        SuiteElements se = suiteelem();
+        return new ConstructCol(valeur, se);
     }
 
     public Element bfbeg() throws Exception{
@@ -125,5 +129,4 @@ class Parser{
     public Enumeration enumerate() throws Exception {
         return new ConstructEnumeration(this.suiteItem());
     }
-
 }
