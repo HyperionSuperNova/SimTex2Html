@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.HashMap;
 
 class Parser{
     /*
@@ -16,6 +17,7 @@ class Parser{
     VAL_COL           ->     \constante_couleur | ID
 
     */
+    public static HashMap<String, String> color = new HashMap<>();
 
     protected LookAhead1 reader;
     public Parser(LookAhead1 r) {
@@ -23,46 +25,30 @@ class Parser{
     }
 
     public Document docu() throws Exception{
-        return new ConstructDocument(debDeclaration(),document());
+        return new ConstructDocument(beginDeclaration(),document());
     }
 
-    public Declarations debDeclaration() throws Exception {
-        return setCol();
-    }
-
-    public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
-        if(reader.check(Sym.SETCOL)) {
-            return color();
-        /*}else if(reader.check(Sym.ABB)){
-            return abb();*/
+    public Declarations beginDeclaration() throws Exception {
+        if (reader.check(Sym.SETCOL)) {
+            return declare();
         }
         return null;
     }
 
-    /*public Declarations abb() throws Exception {
-        String abbMot = "";
-        Sym s = null;
-        SuiteElements se = null;
-        reader.eat(Sym.ABB);
-        if(reader.check(Sym.AG)){
-            reader.eat(Sym.AG);
-            //abbMot = reader.getValue();
-            reader.eat(Sym.ABBMOT);
-            reader.eat(Sym.AD);
-            reader.eat(Sym.AG);
-            if(reader.check(Sym.BFBEG)) s = Sym.BFBEG;
-            else if(reader.check(Sym.ITBEG)) s = Sym.ITBEG;
-            se = suiteelem();
-            return new ConstructDeclarations(setCol(), new Abb(s, se));
-
+    public Declarations declare() throws Exception{
+        if(reader.check(Sym.SETCOL)){
+            reader.eat(Sym.SETCOL);
+            Declarations d = constCol();
+            //reader.eat(Sym.AD);
+            return d;
         }
         return null;
-    }*/
+    }
 
-    public Declarations color() throws Exception {
+    public Declarations constCol() throws Exception{
         String id = "";
         String valeur = "";
-        reader.eat(Sym.SETCOL);
+        if(reader.check(Sym.SETCOL)){ reader.eat(Sym.SETCOL);}
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
             if (reader.check(Sym.MOT)) {
@@ -77,11 +63,36 @@ class Parser{
                     reader.eat(Sym.MOT);
                 }
                 reader.eat(Sym.AD);
-                return new ConstructDeclarations(setCol(), new ValCol(id, valeur));
+                color.put(id,valeur);
+                return new ConstructDeclarations(new Cons_Col(id,valeur), constCol());
             }
         }
         return null;
     }
+
+    /*public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
+        String id = "";
+        String valeur = "";
+        if(reader.check(Sym.SETCOL)) reader.eat(Sym.SETCOL);
+        if (reader.check(Sym.AG)) {
+            reader.eat(Sym.AG);
+            if (reader.check(Sym.MOT)) {
+                id = reader.getValue();
+                reader.eat(Sym.MOT);
+            }
+            reader.eat(Sym.AD);
+            if (reader.check(Sym.AG)) {
+                reader.eat(Sym.AG);
+                if (reader.check(Sym.MOT)) {
+                    valeur = reader.getValue();
+                    reader.eat(Sym.MOT);
+                }
+                reader.eat(Sym.AD);
+                return new ConstructDeclarations(setCol(), new ValCol(id,valeur));
+            }
+        }
+        return null;
+    }*/
 
 
     public Corps document() throws Exception {
@@ -102,7 +113,6 @@ class Parser{
             Linebreak l = new Linebreak("\n");
             return new ConstructSuiteElem(l,suiteelem());
         }else if(reader.check(Sym.BFBEG)){
-            memory = Sym.BFBEG;
             return new ConstructSuiteElem(bfbeg(),suiteelem());
         }else if(reader.check(Sym.AD)){
             reader.eat(Sym.AD);
@@ -113,15 +123,31 @@ class Parser{
             return new ConstructSuiteElem(enumerate(),suiteelem());
         }else if(reader.check(Sym.COULEUR)){
             return new ConstructSuiteElem(couleur(), suiteelem());
-        /*}else if(reader.check(Sym.ABBMOT)){
-            return new ConstructSuiteElem(new ConstructAbb(abbEle()), suiteelem());*/
+        }else if(reader.check(Sym.ABB)){
+            reader.eat(Sym.ABB);
+            return new ConstructSuiteElem(abbr(),suiteelem());
         }
         return null;
     }
 
-   /* public Declarations abbEle() throws Exception {
-
-    }*/
+    public Element abbr() throws Exception{
+        String ab = "";
+        String valeur = "";
+        if (reader.check(Sym.AG)) {
+            reader.eat(Sym.AG);
+            ab = reader.getValue();
+            reader.eat(Sym.MOT);
+            reader.eat(Sym.AD);
+        }
+        if(reader.check(Sym.AG)){
+            reader.eat(Sym.AG);
+            valeur = reader.getValue();
+            reader.eat(Sym.MOT);
+            reader.eat(Sym.AD);
+            return new Abb(valeur,ab);
+        }
+      return null;
+    }
 
     public Element couleur() throws Exception {
         String valeur ="";
@@ -129,6 +155,11 @@ class Parser{
         reader.eat(Sym.AG);
         if(reader.check(Sym.MOT)){
             valeur = reader.getValue();
+            for(String s : color.keySet()){
+                if(s.equals(valeur)){
+                    valeur = color.get(s);
+                }
+            }
             reader.eat(Sym.MOT);
         }
         reader.eat(Sym.AD);

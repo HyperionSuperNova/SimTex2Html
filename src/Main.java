@@ -34,6 +34,9 @@ class Main {
                 e.printStackTrace();
 
             }
+            for(String s: Parser.color.keySet()){
+                System.out.println(s);
+            }
 
             File f = new File("./projet.html");
             BufferedWriter writer = new BufferedWriter(new FileWriter(f,true));
