@@ -59,3 +59,11 @@ class ValColToken extends Token{
 
     public String getValue(){ return couleur; }
 }
+
+class AbbMotToken extends Token{
+    private String texte;
+    public AbbMotToken(Sym s, String texte){
+        super(s);
+        this.texte = texte;
+    }
+}

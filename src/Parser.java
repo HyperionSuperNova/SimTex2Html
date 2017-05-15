@@ -28,9 +28,38 @@ class Parser{
     }
 
     public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
+        if(reader.check(Sym.SETCOL)) {
+            return color();
+        /*}else if(reader.check(Sym.ABB)){
+            return abb();*/
+        }
+        return null;
+    }
+
+    /*public Declarations abb() throws Exception {
+        String abbMot = "";
+        Sym s = null;
+        SuiteElements se = null;
+        reader.eat(Sym.ABB);
+        if(reader.check(Sym.AG)){
+            reader.eat(Sym.AG);
+            //abbMot = reader.getValue();
+            reader.eat(Sym.ABBMOT);
+            reader.eat(Sym.AD);
+            reader.eat(Sym.AG);
+            if(reader.check(Sym.BFBEG)) s = Sym.BFBEG;
+            else if(reader.check(Sym.ITBEG)) s = Sym.ITBEG;
+            se = suiteelem();
+            return new ConstructDeclarations(setCol(), new Abb(s, se));
+
+        }
+        return null;
+    }*/
+
+    public Declarations color() throws Exception {
         String id = "";
         String valeur = "";
-        if(reader.check(Sym.SETCOL)) reader.eat(Sym.SETCOL);
+        reader.eat(Sym.SETCOL);
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
             if (reader.check(Sym.MOT)) {
@@ -45,7 +74,7 @@ class Parser{
                     reader.eat(Sym.MOT);
                 }
                 reader.eat(Sym.AD);
-                return new ConstructDeclarations(setCol(), new ValCol(id,valeur));
+                return new ConstructDeclarations(setCol(), new ValCol(id, valeur));
             }
         }
         return null;
@@ -81,9 +110,15 @@ class Parser{
             return new ConstructSuiteElem(enumerate(),suiteelem());
         }else if(reader.check(Sym.COULEUR)){
             return new ConstructSuiteElem(couleur(), suiteelem());
+        /*}else if(reader.check(Sym.ABBMOT)){
+            return new ConstructSuiteElem(new ConstructAbb(abbEle()), suiteelem());*/
         }
         return null;
     }
+
+   /* public Declarations abbEle() throws Exception {
+
+    }*/
 
     public Element couleur() throws Exception {
         String valeur ="";

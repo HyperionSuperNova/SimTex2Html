@@ -7,17 +7,50 @@ abstract class Declarations {
 }
 
 class ConstructDeclarations extends Declarations{
-    ValCol vc;
+    ElementsDeclaration e;
     Declarations d;
-    public ConstructDeclarations (Declarations d,ValCol vc){
+    public ConstructDeclarations (Declarations d,ElementsDeclaration e){
         this.d =d;
-        this.vc = vc;
+        this.e = e;
     }
     @Override
-    public String transform() { return "<font color = #" + vc.transform() + " >"+ "</font>"; }
+    public String transform() { return e.transform(); }
 }
 
-class ValCol extends Declarations{
+abstract class ElementsDeclaration extends Declarations{
+    abstract public String transform();
+}
+
+class Abb extends ElementsDeclaration {
+    Sym s;
+    SuiteElements se;
+
+    public Abb(Sym s, SuiteElements se){
+        this.s = s;
+        this.se = se;
+    }
+
+    @Override
+    public String transform() {
+        return "";
+    }
+}
+
+class ConstructAbb extends Element{
+    Declarations abreviation;
+    public ConstructAbb(Declarations abreviation){
+        this.abreviation = abreviation;
+    }
+
+    @Override
+    public String transform() {
+        if (((Abb)abreviation).s == Sym.BFBEG){
+            return "<b>" + ((Abb)abreviation).se.transform() + "</b>";
+        }else return "<i>" + ((Abb)abreviation).se.transform() + "</i>";
+    }
+}
+
+class ValCol extends ElementsDeclaration {
     private String id;
     private String valeur;
     public ValCol (String id, String valeur){
@@ -25,7 +58,7 @@ class ValCol extends Declarations{
         this.valeur = valeur;
     }
     @Override
-    public String transform() { return this.valeur; }
+    public String transform() { return "<font color = #" + valeur + " >"+ "</font>"; }
 }
 
 class ConstructCol extends Element{

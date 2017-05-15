@@ -21,6 +21,8 @@ class Main {
 
             File f = new File("./projet.html");
             BufferedWriter writer = new BufferedWriter(new FileWriter(f,true));
+            writer.write(declarations.transform());
+            writer.newLine();
             writer.write(corps.transform());
             writer.close();
 
