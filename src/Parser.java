@@ -18,9 +18,12 @@ class Parser{
     */
 
     protected LookAhead1 reader;
-    public static Sym memory = null;
     public Parser(LookAhead1 r) {
         reader=r;
+    }
+
+    public Document docu() throws Exception{
+        return new ConstructDocument(debDeclaration(),document());
     }
 
     public Declarations debDeclaration() throws Exception {

@@ -1,56 +1,67 @@
-abstract class Corps {
+import com.sun.javafx.css.Declaration;
+
+abstract class Corps extends Document{
     abstract public String transform();
 }
 
-abstract class Declarations {
+abstract class Declarations extends Document{
     abstract public String transform();
+}
+
+abstract class Document{
+    abstract public String transform();
+}
+
+class ConstructDocument extends Document{
+    Declarations d;
+    Corps c;
+    public ConstructDocument(Declarations d, Corps c) {
+        this.d = d;
+        this.c = c;
+    }
+
+    @Override
+    public String transform() {
+        if(d == null && c != null){
+            return "<!DOCTYPE html>\n<html>" + c.transform() +"\n</html>";
+        }else if(d!= null && c==null){
+            return "<!DOCTYPE html>\n<html>" +d.transform()+ "\n</html>";
+        }else if(c != null && d !=null) {
+            return "<!DOCTYPE html>\n<html>\n<head>" + d.transform()+ "\n</head>"+ c.transform() + "\n</html>";
+
+        }else{
+            return "<!DOCTYPE html>\n<html> \n</html>";
+        }
+    }
 }
 
 class ConstructDeclarations extends Declarations{
-    ElementsDeclaration e;
+    ValCol vc;
     Declarations d;
-    public ConstructDeclarations (Declarations d,ElementsDeclaration e){
+    public ConstructDeclarations (Declarations d,ValCol vc){
         this.d =d;
-        this.e = e;
+        this.vc = vc;
     }
     @Override
-    public String transform() { return e.transform(); }
+    public String transform() { return vc.transform() + ">"; }
 }
 
-abstract class ElementsDeclaration extends Declarations{
-    abstract public String transform();
-}
+class Cons_Col extends Declarations{
+    private String id;
+    private String valeur;
 
-class Abb extends ElementsDeclaration {
-    Sym s;
-    SuiteElements se;
-
-    public Abb(Sym s, SuiteElements se){
-        this.s = s;
-        this.se = se;
+    public Cons_Col(String valeur, Declaration se){
+        this.valeur = valeur;
+        this.id = id;
     }
 
     @Override
     public String transform() {
-        return "";
+        return "\n<body text=" + this.valeur + ">";
     }
 }
 
-class ConstructAbb extends Element{
-    Declarations abreviation;
-    public ConstructAbb(Declarations abreviation){
-        this.abreviation = abreviation;
-    }
-
-    @Override
-    public String transform() {
-        if (((Abb)abreviation).s == Sym.BFBEG){
-            return "<b>" + ((Abb)abreviation).se.transform() + "</b>";
-        }else return "<i>" + ((Abb)abreviation).se.transform() + "</i>";
-    }
-}
-
-class ValCol extends ElementsDeclaration {
+class ValCol extends Declarations{
     private String id;
     private String valeur;
     public ValCol (String id, String valeur){
@@ -58,7 +69,7 @@ class ValCol extends ElementsDeclaration {
         this.valeur = valeur;
     }
     @Override
-    public String transform() { return "<font color = #" + valeur + " >"+ "</font>"; }
+    public String transform() { return "\n<body text= " + this.valeur; }
 }
 
 class ConstructCol extends Element{
@@ -84,9 +95,9 @@ class ConstructCorps extends Corps{
     @Override
     public String transform() {
         if(se == null){
-            return "<!DOCTYPE html>\n<html>\n<body>\n" + "\n</body>\n</html>";
+            return "";
         }
-        return "<!DOCTYPE html>\n<html>\n<body>\n" + se.transform() + "\n</body>\n</html>";
+        return "\n<body>\n" + se.transform() + "\n</body>";
     }
 }
 
