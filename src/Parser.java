@@ -29,24 +29,26 @@ class Parser{
     }
 
     public Declarations beginDeclaration() throws Exception {
-        if (reader.check(Sym.SETCOL)) return declare();
+        if (reader.check(Sym.SETCOL)) {
+            return declare();
+        }
         return null;
     }
 
     public Declarations declare() throws Exception{
         if(reader.check(Sym.SETCOL)){
             reader.eat(Sym.SETCOL);
-            return constCol();
+            Declarations d = constCol();
+            //reader.eat(Sym.AD);
+            return d;
         }
         return null;
     }
 
-    public Declarations constCol() throws Exception {
+    public Declarations constCol() throws Exception{
         String id = "";
         String valeur = "";
-        if (reader.check(Sym.SETCOL)) {
-            reader.eat(Sym.SETCOL);
-        }
+        if(reader.check(Sym.SETCOL)){ reader.eat(Sym.SETCOL);}
         if (reader.check(Sym.AG)) {
             reader.eat(Sym.AG);
             if (reader.check(Sym.MOT)) {
@@ -61,12 +63,37 @@ class Parser{
                     reader.eat(Sym.MOT);
                 }
                 reader.eat(Sym.AD);
-                color.put(id, valeur);
-                return new ConstructDeclarations(new Cons_Col(id, valeur), constCol());
+                color.put(id,valeur);
+                return new ConstructDeclarations(new Cons_Col(id,valeur), constCol());
             }
         }
         return null;
     }
+
+    /*public Declarations setCol() throws Exception { // n'affiche qu'un set sur les 3
+        String id = "";
+        String valeur = "";
+        if(reader.check(Sym.SETCOL)) reader.eat(Sym.SETCOL);
+        if (reader.check(Sym.AG)) {
+            reader.eat(Sym.AG);
+            if (reader.check(Sym.MOT)) {
+                id = reader.getValue();
+                reader.eat(Sym.MOT);
+            }
+            reader.eat(Sym.AD);
+            if (reader.check(Sym.AG)) {
+                reader.eat(Sym.AG);
+                if (reader.check(Sym.MOT)) {
+                    valeur = reader.getValue();
+                    reader.eat(Sym.MOT);
+                }
+                reader.eat(Sym.AD);
+                return new ConstructDeclarations(setCol(), new ValCol(id,valeur));
+            }
+        }
+        return null;
+    }*/
+
 
     public Corps document() throws Exception {
         reader.eat(Sym.BEGINDOC);
@@ -77,49 +104,30 @@ class Parser{
     }
 
     public SuiteElements suiteelem() throws Exception{
-        if(reader.check(Sym.MOT)) return mot();
-        else if(reader.check(Sym.LINEBREAK)) return linebreak();
-        else if(reader.check(Sym.BFBEG)) return bf();
-        else if(reader.check(Sym.AD)) reader.eat(Sym.AD);
-        else if (reader.check(Sym.ITBEG)) return it();
-        else if(reader.check(Sym.BEGINENUM)) return beginenum();
-        else if(reader.check(Sym.COULEUR)) return coul();
-        else if(reader.check(Sym.ABB)) return abreviation();
+        if(reader.check(Sym.MOT)){
+            String s = reader.getValue();
+            reader.eat(Sym.MOT);
+            return new ConstructSuiteElem(new Mot(s),suiteelem());
+        }else if(reader.check(Sym.LINEBREAK)){
+            reader.eat(Sym.LINEBREAK);
+            Linebreak l = new Linebreak("\n");
+            return new ConstructSuiteElem(l,suiteelem());
+        }else if(reader.check(Sym.BFBEG)){
+            return new ConstructSuiteElem(bfbeg(),suiteelem());
+        }else if(reader.check(Sym.AD)){
+            reader.eat(Sym.AD);
+        }else if (reader.check(Sym.ITBEG)){
+            return new ConstructSuiteElem(itbeg(),suiteelem());
+        }else if(reader.check(Sym.BEGINENUM)){
+            reader.eat(Sym.BEGINENUM);
+            return new ConstructSuiteElem(enumerate(),suiteelem());
+        }else if(reader.check(Sym.COULEUR)){
+            return new ConstructSuiteElem(couleur(), suiteelem());
+        }else if(reader.check(Sym.ABB)){
+            reader.eat(Sym.ABB);
+            return new ConstructSuiteElem(abbr(),suiteelem());
+        }
         return null;
-    }
-
-    public SuiteElements mot() throws Exception{
-        String s = reader.getValue();
-        reader.eat(Sym.MOT);
-        return new ConstructSuiteElem(new Mot(s),suiteelem());
-    }
-
-    public SuiteElements linebreak() throws Exception{
-        reader.eat(Sym.LINEBREAK);
-        Linebreak l = new Linebreak("\n");
-        return new ConstructSuiteElem(l,suiteelem());
-    }
-
-    public SuiteElements bf() throws Exception{
-        return new ConstructSuiteElem(bfbeg(),suiteelem());
-    }
-
-    public SuiteElements it() throws Exception{
-        return new ConstructSuiteElem(itbeg(),suiteelem());
-    }
-
-    public SuiteElements beginenum() throws Exception{
-        reader.eat(Sym.BEGINENUM);
-        return new ConstructSuiteElem(enumerate(),suiteelem());
-    }
-
-    public SuiteElements coul() throws Exception{
-        return new ConstructSuiteElem(couleur(), suiteelem());
-    }
-
-    public SuiteElements abreviation() throws Exception{
-        reader.eat(Sym.ABB);
-        return new ConstructSuiteElem(abbr(),suiteelem());
     }
 
     public Element abbr() throws Exception{
@@ -180,7 +188,8 @@ class Parser{
         if(this.reader.check(Sym.ITEM)) {
             reader.eat(Sym.ITEM);
             Item it = new Item(suiteelem());
-            return new SuiteItems(it, suiteItem());
+            SuiteItems b = new SuiteItems(it, suiteItem());
+            return b;
         }
         reader.eat(Sym.ENDENUM);
         return null;

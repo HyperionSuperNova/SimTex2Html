@@ -14,6 +14,9 @@ class Main {
         LookAhead1 look = new LookAhead1(lexer);
         Parser parser = new Parser(look);
         try {
+            //Declarations declarations = parser.debDeclaration();
+            //Corps corps = parser.document();
+            //System.out.println(declarations.transform());
             Document doc = parser.docu();
             System.out.println(doc.transform());
             try{
