@@ -1,2 +1,2 @@
 # SimTex2Html
-Compiler SimpleText Format to HTML Format
+Compile SimpleText Format to HTML Format
